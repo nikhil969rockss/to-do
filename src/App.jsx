@@ -224,7 +224,7 @@ const App = () => {
                       </div>
                     );
                   })
-                : null}
+                : <div className="text-center animate-pulse mt-4 text-sm font-[600] tracking-tighter">No todos available...</div>}
             </div>
           }
         </section>
