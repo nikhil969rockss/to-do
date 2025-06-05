@@ -4,9 +4,10 @@ import { IoIosAddCircle } from "react-icons/io";
 import { FaEdit } from "react-icons/fa";
 import { MdOutlineError } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useLocalStorage("todos", []);
   const [inputVal, setInputVal] = useState("");
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("all");
@@ -130,8 +131,8 @@ const App = () => {
                       filter === "all" && index === 0
                         ? "bg-blue-500 text-white transition-all duration-300"
                         : filter === "pending" && index === 1
-                        ? "bg-yellow-600 text-white transition-all duration-300"
-                        : filter === "completed" && index === 2
+                        ? "bg-yellow-500 text-white transition-all duration-300"
+                        : filter === "complete" && index === 2
                         ? "bg-green-600 text-white transition-all duration-300"
                         : ""
                     }`}
@@ -144,87 +145,89 @@ const App = () => {
           </ul>
           {
             <div className="todos ">
-              {filteredTodos.length > 0
-                ? filteredTodos?.map((item, index) => {
-                    return (
-                      <div
-                        key={item.id}
-                        className="flex items-center justify-between mt-4 border-b-[1px] border-black/10 pb-2"
-                      >
-                        {" "}
-                        <div className="flex flex-1  items-center gap-3 ">
-                          {isEditing && editingId === item.id ? null : (
-                            <input
-                              className="cursor-pointer"
-                              checked={item?.isCompleted}
-                              onChange={() => handleDoneTodos(item.id)}
-                              type="checkbox"
-                              name=""
-                              id=""
-                            />
-                          )}
-                          {isEditing && editingId === item.id ? null : (
-                            <p
-                              type="text"
-                              onClick={() => handleDoneTodos(item.id)}
-                              className={`text-lg flex-1 cursor-pointer ${
-                                item.isCompleted && "line-through"
-                              }`}
-                            >
-                              {" "}
-                              {item.todo}
-                            </p>
-                          )}
-                          {isEditing && editingId === item.id && (
-                            <input
-                              ref={inputRef}
-                              autoFocus
-                              value={editingText}
-                              onChange={(e) => setEditingText(e.target.value)}
-                              type="text"
-                              className={`text-lg flex-1 px-2 py-1 mr-2 rounded-md  `}
-                              onKeyDown={(e) =>
-                                e.key === "Enter" && handleSave(item.id)
-                              }
-                            ></input>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={
-                              !isEditing
-                                ? () => handleEdit(item.id)
-                                : () => handleSave(item.id)
-                            }
-                            disabled={item.isCompleted}
-                            className={`px-4 py-2 rounded-full 0 text-white font-[600]  flex items-center gap-1 ${
-                              item.isCompleted
-                                ? "cursor-not-allowed bg-gray-400 opacity-50"
-                                : "cursor-pointer bg-green-600 hover:bg-green-700 "
+              {filteredTodos.length > 0 ? (
+                filteredTodos?.map((item, index) => {
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between mt-4 border-b-[1px] border-black/10 pb-2"
+                    >
+                      {" "}
+                      <div className="flex flex-1  items-center gap-3 ">
+                        {isEditing && editingId === item.id ? null : (
+                          <input
+                            className="cursor-pointer"
+                            checked={item?.isCompleted}
+                            onChange={() => handleDoneTodos(item.id)}
+                            type="checkbox"
+                            name=""
+                            id=""
+                          />
+                        )}
+                        {isEditing && editingId === item.id ? null : (
+                          <p
+                            type="text"
+                            onClick={() => handleDoneTodos(item.id)}
+                            className={`text-lg flex-1 cursor-pointer ${
+                              item.isCompleted && "line-through"
                             }`}
                           >
-                            <span>
-                              {isEditing && editingId === item.id ? (
-                                <FaSave />
-                              ) : (
-                                <FaEdit />
-                              )}
-                            </span>
-                            {isEditing && editingId === item.id
-                              ? "save"
-                              : "edit"}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(item.id)}
-                            className="px-4 py-2 cursor-pointer rounded-full bg-red-600 text-white font-[600] hover:bg-red-700 flex items-center "
-                          >
-                            delete
-                          </button>
-                        </div>
+                            {" "}
+                            {item.todo}
+                          </p>
+                        )}
+                        {isEditing && editingId === item.id && (
+                          <input
+                            ref={inputRef}
+                            autoFocus
+                            value={editingText}
+                            onChange={(e) => setEditingText(e.target.value)}
+                            type="text"
+                            className={`text-lg flex-1 px-2 py-1 mr-2 rounded-md  `}
+                            onKeyDown={(e) =>
+                              e.key === "Enter" && handleSave(item.id)
+                            }
+                          ></input>
+                        )}
                       </div>
-                    );
-                  })
-                : <div className="text-center animate-pulse mt-4 text-sm font-[600] tracking-tighter">No todos available...</div>}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={
+                            !isEditing
+                              ? () => handleEdit(item.id)
+                              : () => handleSave(item.id)
+                          }
+                          disabled={item.isCompleted}
+                          className={`px-4 py-2 rounded-full 0 text-white font-[600]  flex items-center gap-1 ${
+                            item.isCompleted
+                              ? "cursor-not-allowed bg-gray-400 opacity-50"
+                              : "cursor-pointer bg-green-600 hover:bg-green-700 "
+                          }`}
+                        >
+                          <span>
+                            {isEditing && editingId === item.id ? (
+                              <FaSave />
+                            ) : (
+                              <FaEdit />
+                            )}
+                          </span>
+                          {isEditing && editingId === item.id ? "save" : "edit"}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="px-4 py-2 cursor-pointer rounded-full bg-red-600 text-white font-[600] hover:bg-red-700 flex items-center "
+                        >
+                          delete
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center animate-pulse mt-4 text-sm font-[600] tracking-tighter">
+                  No todos available...
+                </div>
+              )}
             </div>
           }
         </section>
