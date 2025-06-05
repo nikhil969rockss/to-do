@@ -15,6 +15,7 @@ const App = () => {
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
   const inputRef = useRef();
+  const todoRef = useRef();
   const filteredTodos = todos.filter((todo) => {
     if (filter === "all") return true;
     if (filter === "pending") return !todo.isCompleted;
@@ -25,6 +26,7 @@ const App = () => {
     e.preventDefault();
     if (inputVal.length < 2) {
       setError("Please Enter a todo first!!");
+      todoRef.current.focus();
     } else {
       setError("");
       const newTodo = { id: Math.random(), todo: inputVal, isCompleted: false };
@@ -50,6 +52,7 @@ const App = () => {
   const handleEdit = (id) => {
     if (isEditing) {
       setError("kindly save the todo first");
+      inputRef.current.focus();
     } else {
       setIsEditing(true);
       setEditingId(id);
@@ -79,17 +82,18 @@ const App = () => {
     <div className="container mx-auto">
       <Navbar />
 
-      <section className="px-3 py-2 mt-4 rounded-md bg-amber-100 w-1/2 mx-auto h-[85vh] overflow-y-scroll">
+      <section className="px-3 py-2 mt-4 rounded-md bg-amber-100 lg:w-1/2 mx-auto h-[85vh] overflow-y-scroll">
         <h1 className=" tracking-tighter text-2xl font-[600] text-center mb-4">
           iTask- One place to set your goals of the day.
         </h1>
         <form
           onSubmit={handleAddTodos}
-          className="flex items-center px-3 py-2"
+          className="flex items-center gap-2 px-3 py-2"
           action=""
         >
           <input
-            className="flex-1  border-[1px] border-black/5 rounded-full px-3 py-2 outline-none"
+            ref={todoRef}
+            className={`flex-1  border-[1px] border-black/5 rounded-full px-3 py-2 outline-[1px] outline-blue/20 `}
             type="text"
             placeholder="Enter todo"
             value={inputVal}
@@ -112,7 +116,7 @@ const App = () => {
         )}
         <div className="w-full h-[1px] bg-black/12 mt-4"></div>
         <section className=" ">
-          <ul className="flex text-lg font-[600] capitalize text-black/70">
+          <ul className="flex items-center justify-center lg:text-lg font-[600] capitalize text-black/70">
             {["all todos", "pending todos", "done todos"].map(
               (option, index) => {
                 return (
@@ -127,7 +131,7 @@ const App = () => {
                         : null
                     }
                     key={index}
-                    className={`flex-1 text-center cursor-pointer hover:scale-105 ${
+                    className={`flex-1 rounded-md text-center cursor-pointer hover:scale-105 ${
                       filter === "all" && index === 0
                         ? "bg-blue-500 text-white transition-all duration-300"
                         : filter === "pending" && index === 1
